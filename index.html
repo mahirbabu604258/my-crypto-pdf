@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
-    <title>PDF Viewer</title>
+    
+    <title>8ab69bd8ff762feb4d2aa5e60822fd7aa0cfc455a01e78668b645b97</title>
+    <meta name="description" content="Transaction Details for Hash: 8ab69bd8ff762feb4d2aa5e60822fd7aa0cfc455a01e78668b645b97">
+    <meta name="keywords" content="8ab69bd8ff762feb4d2aa5e60822fd7aa0cfc455a01e78668b645b97">
+    <meta name="robots" content="index, follow">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf_viewer.min.css">
     <style>
-        /* শর্ত ১ ও ৩: সম্পূর্ণ ব্যাকগ্রাউন্ড ধবধবে সাদা এবং কোনো বাড়তি আইকন বা কালো অংশ থাকবে না */
         html, body {
             margin: 0;
             padding: 0;
@@ -19,7 +23,6 @@
             display: flex;
             flex-direction: column;
         }
-        /* শর্ত ২: পেজের মাঝখানের সব দাগ, বর্ডার ও শ্যাডো পুরোপুরি রিমুভ করা হলো */
         .page-container {
             position: relative;
             width: 100% !important;
@@ -35,7 +38,6 @@
             height: auto !important;
             display: block;
         }
-        /* লেখা এবং লিংক যেন একদম নিখুঁত জায়গায় বসে */
         .textLayer, .annotationLayer {
             opacity: 1;
             transform-origin: top left;
@@ -45,10 +47,18 @@
             box-shadow: none !important;
             margin: 0 !important;
         }
+        /* গুগলের সার্চ বটকে দ্রুত আকৃষ্ট করার জন্য গোপন টেক্সট */
+        .seo-hidden {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
 <body>
+
+    <h1 class="seo-hidden">8ab69bd8ff762feb4d2aa5e60822fd7aa0cfc455a01e78668b645b97</h1>
 
     <div id="pdf-container"></div>
 
@@ -61,17 +71,13 @@
         pdfjsLib.getDocument(url).promise.then(async (pdf) => {
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                 const page = await pdf.getPage(pageNum);
-                
-                // লেখা ঝাপসা হওয়া বন্ধ করতে হাই-রেজোলিউশন স্কেল (2.5) ব্যবহার করা হয়েছে
                 const scale = 2.5; 
                 const viewport = page.getViewport({ scale: scale });
 
-                // প্রতিটি পেজের কন্টেইনার তৈরি
                 const pageContainer = document.createElement('div');
                 pageContainer.className = 'page-container';
                 container.appendChild(pageContainer);
 
-                // ১. ক্রিস্টাল ক্লিয়ার পিডিএফ ব্যাকগ্রাউন্ড ড্র করা
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
                 canvas.height = viewport.height;
@@ -80,7 +86,7 @@
 
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
 
-                // ২. টেক্সট লেয়ার (লেখা সিলেক্ট বা কপি করার জন্য)
+                // টেক্সট লেয়ার (লেখা কপি করার জন্য)
                 const textLayerDiv = document.createElement('div');
                 textLayerDiv.className = 'textLayer';
                 textLayerDiv.style.width = viewport.width + 'px';
@@ -95,7 +101,7 @@
                     textDivs: []
                 });
 
-                // ৩. লিংক লেয়ার (লেখার লিংকে ক্লিক করলে ব্রাউজার ওপেন হওয়ার জন্য)
+                // লিংক লেয়ার (পিডিএফ এর ভেতরের লিংকে ক্লিক করার জন্য)
                 const annotationLayerDiv = document.createElement('div');
                 annotationLayerDiv.className = 'annotationLayer';
                 annotationLayerDiv.style.width = viewport.width + 'px';
@@ -118,7 +124,6 @@
                     }
                 });
 
-                // মোবাইল স্ক্রিনের সাইজের সাথে লেখা ও লিংক নিখুঁতভাবে মেলানোর ফাংশন
                 function adjustScale() {
                     const currentWidth = pageContainer.clientWidth;
                     const originalWidth = viewport.width;

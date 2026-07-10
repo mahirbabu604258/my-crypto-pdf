@@ -5,59 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        /* আপনার পছন্দ হওয়া সেই ফুল স্ক্রিন ডিজাইন */
+        /* আপনার পছন্দ হওয়া সেই ফুল স্ক্রিন ডিজাইন এবং আসল ব্যাকগ্রাউন্ড */
         html, body {
             margin: 0;
             padding: 0;
-            background-color: #ffffff;
             width: 100%;
             height: 100%;
+            overflow: hidden;
+            background-color: #ffffff;
         }
-        #pdf-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        object {
             width: 100%;
-        }
-        canvas {
-            width: 100% !important;
-            height: auto !important;
-            display: block;
+            height: 100%;
+            border: none;
         }
     </style>
-    <!-- ব্যাকএন্ডে ফাইল প্রসেস করার লাইব্রেরি -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
 <body>
 
-    <div id="pdf-container"></div>
-
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-
-        const url = 'document.pdf';
-        const container = document.getElementById('pdf-container');
-
-        pdfjsLib.getDocument(url).promise.then(async pdf => {
-            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                const canvas = document.createElement('canvas');
-                container.appendChild(canvas);
-                
-                const page = await pdf.getPage(pageNum);
-                
-                // কোড ক্লিয়ার করা হলো (scale: 5) যাতে জুম করলে লেখা সম্পূর্ণ পরিষ্কার থাকে
-                const viewport = page.getViewport({ scale: 5 }); 
-                const context = canvas.getContext('2d');
-                
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                await page.render({ canvasContext: context, viewport: viewport }).promise;
-            }
-        }).catch(error => {
-            console.error('Error: ', error);
-        });
-    </script>
+    <object data="document.pdf#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf">
+        <embed src="document.pdf#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" />
+    </object>
 
 </body>
 </html>

@@ -5,32 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Document</title>
     <style>
-        /* শর্ত ১ ও ৩: ব্যাকগ্রাউন্ড সম্পূর্ণ সাদা থাকবে এবং কোনো কালো অংশ থাকবে name */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
+            background-color: #ffffff;
             overflow: hidden;
-            background-color: #ffffff !important;
         }
-        
-        /* কোনো বাড়তি বা ফালতু চিহ্ন ছাড়া শুধু পিওর পিডিএফ দেখানোর ফ্রেম */
-        iframe, object, embed {
+        object, embed, iframe {
             width: 100%;
             height: 100%;
             border: none;
-            background-color: #ffffff !important;
         }
     </style>
 </head>
 <body>
 
-    <iframe src="document.pdf#toolbar=0&navpanes=0" type="application/pdf">
-        <object data="document.pdf#toolbar=0&navpanes=0" type="application/pdf">
-            <embed src="document.pdf#toolbar=0&navpanes=0" type="application/pdf" />
-        </object>
-    </iframe>
+    <object data="document.pdf" type="application/pdf">
+        <embed src="document.pdf" type="application/pdf" />
+    </object>
 
 </body>
 </html>

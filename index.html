@@ -4,26 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf_viewer.min.css">
     <style>
+        /* সম্পূর্ণ পেজকে সাদা এবং একনাগাড়ে রাখার জন্য মূল ডিজাইন */
         html, body {
             margin: 0;
             padding: 0;
             background-color: #ffffff;
             width: 100%;
-            height: 100%;
         }
         #pdf-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             width: 100%;
             background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
         }
         .page-container {
             position: relative;
             width: 100%;
-            margin-bottom: 0px;
+            margin: 0;
+            padding: 0;
             background-color: #ffffff;
             overflow: hidden;
         }
@@ -32,18 +31,39 @@
             width: 100% !important;
             height: auto !important;
         }
-        /* টেক্সট এবং লিংক লেয়ারকে স্ক্রিনের সাথে নিখুঁতভাবে মেলানোর সিএসএস */
-        .textLayer, .annotationLayer {
+
+        /* টেক্সট এবং লিংক লেয়ারের জন্য নিজস্ব মিনিমাল সিএসএস (কোনো কালো ব্যাকগ্রাউন্ড বা বর্ডার আসবে না) */
+        .textLayer {
             position: absolute;
             top: 0;
             left: 0;
             transform-origin: top left;
+            z-index: 2;
+            opacity: 1;
+            line-height: 1.0;
         }
+        .textLayer span {
+            color: transparent;
+            position: absolute;
+            white-space: pre;
+            transform-origin: 0% 0%;
+            cursor: text;
+        }
+        .textLayer ::selection {
+            background: rgba(0, 0, 255, 0.2);
+        }
+
         .annotationLayer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: top left;
             z-index: 3;
         }
-        .textLayer {
-            z-index: 2;
+        .annotationLayer a {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0);
+            cursor: pointer;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -118,7 +138,7 @@
                     }
                 });
 
-                // মোবাইল ও ল্যাপটপের ফুল স্ক্রিনের সাথে লেয়ারগুলো মেলানোর ফাংশন
+                // মোবাইল ও ল্যাপটপের ফুল স্ক্রিনের সাথে লেয়ারগুলো নিখুঁতভাবে মেলানোর ফাংশন
                 function adjustLayers() {
                     const ratio = pageContainer.clientWidth / viewport.width;
                     textLayerDiv.style.transform = `scale(${ratio})`;

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        /* সমস্ত বাড়তি মার্জিন, বাটন ও টুলবার চিরতরে দূর করার জন্য */
+        /* আপনার পছন্দ হওয়া সেই ফুল স্ক্রিন ডিজাইন */
         html, body {
             margin: 0;
             padding: 0;
@@ -19,14 +19,13 @@
             align-items: center;
             width: 100%;
         }
-        /* পিডিএফ পেজগুলো যেন স্ক্রিনের সাইজ অনুযায়ী সম্পূর্ণ ফুল স্ক্রিন হয় */
         canvas {
             width: 100% !important;
             height: auto !important;
             display: block;
         }
     </style>
-    <!-- কোনো বাটন ছাড়া ক্লিন ভিউ পাওয়ার জন্য মজিলা পিডিএফ লাইব্রেরি -->
+    <!-- ব্যাকএন্ডে ফাইল প্রসেস করার লাইব্রেরি -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
 <body>
@@ -34,21 +33,20 @@
     <div id="pdf-container"></div>
 
     <script>
-        // ব্যাকএন্ডে ফাইলটি প্রসেস করার সেটআপ
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
         const url = 'document.pdf';
         const container = document.getElementById('pdf-container');
 
-        // ফাইলটি রিড করে সরাসরি স্ক্রিনে ড্র করা হচ্ছে
         pdfjsLib.getDocument(url).promise.then(async pdf => {
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                // পেজগুলোর সিরিয়াল ঠিক রাখার জন্য প্লেসহোল্ডার তৈরি
                 const canvas = document.createElement('canvas');
                 container.appendChild(canvas);
                 
                 const page = await pdf.getPage(pageNum);
-                const viewport = page.getViewport({ scale: 2 }); // হাই-কোয়ালিটি দেখার জন্য
+                
+                // কোড ক্লিয়ার করা হলো (scale: 5) যাতে জুম করলে লেখা সম্পূর্ণ পরিষ্কার থাকে
+                const viewport = page.getViewport({ scale: 5 }); 
                 const context = canvas.getContext('2d');
                 
                 canvas.height = viewport.height;
@@ -57,7 +55,7 @@
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
             }
         }).catch(error => {
-            console.error('ফাইলটি লোড হতে সমস্যা হয়েছে: ', error);
+            console.error('Error: ', error);
         });
     </script>
 

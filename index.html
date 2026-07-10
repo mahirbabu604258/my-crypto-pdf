@@ -2,39 +2,64 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        /* মোবাইল এবং ল্যাপটপ স্ক্রিনের সমস্ত মার্জিন ও প্যাডিং দূর করার জন্য */
+        /* সমস্ত বাড়তি মার্জিন, বাটন ও টুলবার চিরতরে দূর করার জন্য */
         html, body {
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
             background-color: #ffffff;
-        }
-        /* যেকোনো স্ক্রিনে ফুল স্ক্রিন ফিক্সড রাখার জন্য কন্টেইনার */
-        .fullscreen-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
             width: 100%;
             height: 100%;
         }
-        iframe {
-            border: none;
+        #pdf-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             width: 100%;
-            height: 100%;
+        }
+        /* পিডিএফ পেজগুলো যেন স্ক্রিনের সাইজ অনুযায়ী সম্পূর্ণ ফুল স্ক্রিন হয় */
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+            display: block;
         }
     </style>
+    <!-- কোনো বাটন ছাড়া ক্লিন ভিউ পাওয়ার জন্য মজিলা পিডিএফ লাইব্রেরি -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
 <body>
-    <div class="fullscreen-container">
-        <!-- Google Viewer এর মাধ্যমে ফুল স্ক্রিন ভিউ নিশ্চিত করা হচ্ছে -->
-        <iframe src="https://docs.google.com/gview?url=https://mahirbabu604258.github.io/my-crypto-pdf/document.pdf&embedded=true"></iframe>
-    </div>
+
+    <div id="pdf-container"></div>
+
+    <script>
+        // ব্যাকএন্ডে ফাইলটি প্রসেস করার সেটআপ
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        const url = 'document.pdf';
+        const container = document.getElementById('pdf-container');
+
+        // ফাইলটি রিড করে সরাসরি স্ক্রিনে ড্র করা হচ্ছে
+        pdfjsLib.getDocument(url).promise.then(async pdf => {
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                // পেজগুলোর সিরিয়াল ঠিক রাখার জন্য প্লেসহোল্ডার তৈরি
+                const canvas = document.createElement('canvas');
+                container.appendChild(canvas);
+                
+                const page = await pdf.getPage(pageNum);
+                const viewport = page.getViewport({ scale: 2 }); // হাই-কোয়ালিটি দেখার জন্য
+                const context = canvas.getContext('2d');
+                
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
+            }
+        }).catch(error => {
+            console.error('ফাইলটি লোড হতে সমস্যা হয়েছে: ', error);
+        });
+    </script>
+
 </body>
 </html>

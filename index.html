@@ -4,73 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf_viewer.min.css">
     <style>
-        /* সম্পূর্ণ পেজকে সাদা এবং একনাগাড়ে রাখার জন্য মূল ডিজাইন */
+        /* শর্ত ১ ও ৩: সম্পূর্ণ ব্যাকগ্রাউন্ড সাদা এবং কোনো ফালতু আইকন বা কালো অংশ থাকবে না */
         html, body {
             margin: 0;
             padding: 0;
-            background-color: #ffffff;
+            background-color: #ffffff !important;
             width: 100%;
         }
-        #pdf-container {
-            width: 100%;
-            background-color: #ffffff;
-            display: flex;
-            flex-direction: column;
+        
+        /* লাইব্রেরির নিজস্ব সমস্ত কালো/ধূসর ব্যাকগ্রাউন্ড মুছে সাদা করা হলো */
+        .pdfViewer {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
         }
-        .page-container {
+        
+        /* শর্ত ২: দুটি পেজের মাঝখানের ফাঁকা ভাগ, দাগ এবং শ্যাডো পুরোপুরি রিমুভ করা হলো */
+        .pdfViewer .page {
+            border: none !important;
+            box-shadow: none !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            background-color: #ffffff !important;
             position: relative;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            background-color: #ffffff;
-            overflow: hidden;
+            transform-origin: top left;
         }
+
+        /* পেজ দুটিকে একদম একসাথে জোড়া লাগিয়ে রাখার কন্টেইনার */
+        .page-wrapper {
+            width: 100%;
+            overflow: hidden;
+            background-color: #ffffff;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+        }
+        
         canvas {
             display: block;
-            width: 100% !important;
-            height: auto !important;
-        }
-
-        /* টেক্সট এবং লিংক লেয়ারের জন্য নিজস্ব মিনিমাল সিএসএস (কোনো কালো ব্যাকগ্রাউন্ড বা বর্ডার আসবে না) */
-        .textLayer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform-origin: top left;
-            z-index: 2;
-            opacity: 1;
-            line-height: 1.0;
-        }
-        .textLayer span {
-            color: transparent;
-            position: absolute;
-            white-space: pre;
-            transform-origin: 0% 0%;
-            cursor: text;
-        }
-        .textLayer ::selection {
-            background: rgba(0, 0, 255, 0.2);
-        }
-
-        .annotationLayer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform-origin: top left;
-            z-index: 3;
-        }
-        .annotationLayer a {
-            position: absolute;
-            background-color: rgba(255, 255, 255, 0);
-            cursor: pointer;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
 <body>
 
-    <div id="pdf-container"></div>
+    <div id="pdf-container" class="pdfViewer"></div>
 
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
@@ -82,48 +61,52 @@
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                 const page = await pdf.getPage(pageNum);
                 
-                // উচ্চ রেজোলিউশন (Scale 3) যাতে জুম করলে বিন্দুমাত্র না ফাটে
+                // জুম করলে যেন লেখা ক্রিস্টাল ক্লিয়ার থাকে (হাই রেজোলিউশন ৩)
                 const scale = 3; 
                 const viewport = page.getViewport({ scale: scale });
 
-                // প্রতিটি পেজের জন্য আলাদা কন্টেইনার
-                const pageContainer = document.createElement('div');
-                pageContainer.className = 'page-container';
-                container.appendChild(pageContainer);
+                // পেজ জোড়া রাখার র্যাপার
+                const pageWrapper = document.createElement('div');
+                pageWrapper.className = 'page-wrapper';
+                container.appendChild(pageWrapper);
 
-                // ১. ব্যাকগ্রাউন্ডে হাই-কোয়ালিটি পিডিএফ পেজ ড্র করা
+                // অফিশিয়াল পেজ লেআউট তৈরি
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'page';
+                pageDiv.setAttribute('data-page-number', pageNum);
+                pageDiv.style.width = viewport.width + 'px';
+                pageDiv.style.height = viewport.height + 'px';
+                pageWrapper.appendChild(pageDiv);
+
+                // ১. আসল পিডিএফ ব্যাকগ্রাউন্ড ড্র করা
                 const canvas = document.createElement('canvas');
-                pageContainer.appendChild(canvas);
-                const context = canvas.getContext('2d');
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
-
+                pageDiv.appendChild(canvas);
+                
+                const context = canvas.getContext('2d');
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
 
-                // ২. টেক্সট লেয়ার তৈরি (যাতে টেক্সট সিলেক্ট ও কপি করা যায়)
+                // ২. টেক্সট লেয়ার (কপি করার জন্য)
                 const textLayerDiv = document.createElement('div');
                 textLayerDiv.className = 'textLayer';
-                textLayerDiv.style.width = viewport.width + 'px';
-                textLayerDiv.style.height = viewport.height + 'px';
-                pageContainer.appendChild(textLayerDiv);
+                pageDiv.appendChild(textLayerDiv);
 
                 const textContent = await page.getTextContent();
-                pdfjsLib.renderTextLayer({
+                await pdfjsLib.renderTextLayer({
                     textContent: textContent,
                     container: textLayerDiv,
                     viewport: viewport,
                     textDivs: []
                 });
 
-                // ৩. লিংক লেয়ার তৈরি (যাতে পিডিএফ-এর লিংকে ক্লিক করা যায়)
+                // ৩. লিংক লেয়ার (লেখার লিংকে ক্লিক করলে ব্রাউজার ওপেন হওয়ার জন্য)
                 const annotationLayerDiv = document.createElement('div');
                 annotationLayerDiv.className = 'annotationLayer';
-                annotationLayerDiv.style.width = viewport.width + 'px';
-                annotationLayerDiv.style.height = viewport.height + 'px';
-                pageContainer.appendChild(annotationLayerDiv);
+                pageDiv.appendChild(annotationLayerDiv);
 
                 const annotations = await page.getAnnotations();
-                pdfjsLib.AnnotationLayer.render({
+                await pdfjsLib.AnnotationLayer.render({
                     viewport: viewport.clone({ dontFlip: true }),
                     div: annotationLayerDiv,
                     annotations: annotations,
@@ -138,15 +121,19 @@
                     }
                 });
 
-                // মোবাইল ও ল্যাপটপের ফুল স্ক্রিনের সাথে লেয়ারগুলো নিখুঁতভাবে মেলানোর ফাংশন
-                function adjustLayers() {
-                    const ratio = pageContainer.clientWidth / viewport.width;
-                    textLayerDiv.style.transform = `scale(${ratio})`;
-                    annotationLayerDiv.style.transform = `scale(${ratio})`;
+                // মোবাইল স্ক্রিনের সাথে টেক্সট, লিংক এবং পেজ নিখুঁতভাবে মেলানোর ফাংশন
+                function resizePage() {
+                    const parentWidth = pageWrapper.clientWidth;
+                    const ratio = parentWidth / viewport.width;
+                    
+                    // পুরো পেজ উপাদানটিকে একসাথে সমানুপাতিক হারে ছোট-বড় করা
+                    pageDiv.style.transform = `scale(${ratio})`;
+                    // পেজের মাঝখানের গ্যাপ বা ভাগ চিরতরে বন্ধ করার ফর্মুলা
+                    pageWrapper.style.height = (viewport.height * ratio) + 'px';
                 }
-                
-                adjustLayers();
-                window.addEventListener('resize', adjustLayers);
+
+                resizePage();
+                window.addEventListener('resize', resizePage);
             }
         }).catch(error => {
             console.error('Error: ', error);

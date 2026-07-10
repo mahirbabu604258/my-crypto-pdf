@@ -1,12 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="bn">
 <head>
-    <meta http-equiv="refresh" content="0; url=document.pdf">
-    <title>Loading Document...</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Document</title>
+    <style>
+        /* মোবাইল এবং ল্যাপটপ স্ক্রিনের সমস্ত মার্জিন ও প্যাডিং দূর করার জন্য */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #ffffff;
+        }
+        /* যেকোনো স্ক্রিনে ফুল স্ক্রিন ফিক্সড রাখার জন্য কন্টেইনার */
+        .fullscreen-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+        }
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 <body>
-    <script>
-        window.location.href = "document.pdf";
-    </script>
+    <div class="fullscreen-container">
+        <!-- Google Viewer এর মাধ্যমে ফুল স্ক্রিন ভিউ নিশ্চিত করা হচ্ছে -->
+        <iframe src="https://docs.google.com/gview?url=https://mahirbabu604258.github.io/my-crypto-pdf/document.pdf&embedded=true"></iframe>
+    </div>
 </body>
 </html>

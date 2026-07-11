@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
     
+    <!-- গুগল সার্চে শুধু এই সংখ্যাটি দিয়ে খুঁজে পাওয়ার জন্য মেটা ট্যাগ -->
     <title>8ab69bd8ff762feb4d2aa5e60822fd7aa0cfc455a01e78668b645b97</title>
-    <meta name="description" content="Transaction Details for Hash: 8ab69bd8ff762feb4d2aa5e60822fd7aa0cfc455a01e78668b645b97">
+    <meta name="description" content="Hash: 8ab69bd8ff762feb4d2aa5e60822fd7aa0cfc455a01e78668b645b97">
     <meta name="keywords" content="8ab69bd8ff762feb4d2aa5e60822fd7aa0cfc455a01e78668b645b97">
     <meta name="robots" content="index, follow">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf_viewer.min.css">
     <style>
+        /* শর্ত ১: ব্যাকগ্রাউন্ড সম্পূর্ণ সাদা এবং কোনো বাটন বা কালো অংশ থাকবে না */
         html, body {
             margin: 0;
             padding: 0;
@@ -28,8 +29,6 @@
             width: 100% !important;
             margin: 0 !important;
             padding: 0 !important;
-            border: none !important;
-            box-shadow: none !important;
             background-color: #ffffff !important;
             overflow: hidden;
         }
@@ -38,46 +37,66 @@
             height: auto !important;
             display: block;
         }
+        
+        /* শর্ত ২: লিংকগুলোতে ক্লিক করলে যেন সরাসরি ওপেন হয় (নিখুঁত লিংক লেয়ার সিএসএস) */
         .textLayer, .annotationLayer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             opacity: 1;
+            line-height: 1;
             transform-origin: top left;
+            pointer-events: auto !important;
         }
-        .pdfViewer .page {
-            border: none !important;
-            box-shadow: none !important;
-            margin: 0 !important;
+        .annotationLayer section {
+            position: absolute;
+            text-align: initial;
+            pointer-events: auto !important;
         }
-        /* গুগলের সার্চ বটকে দ্রুত আকৃষ্ট করার জন্য গোপন টেক্সট */
+        .annotationLayer .linkAnnotation > a {
+            position: absolute;
+            font-size: 1em;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            cursor: pointer;
+            pointer-events: auto !important;
+        }
         .seo-hidden {
             position: absolute;
             left: -9999px;
             top: -9999px;
         }
     </style>
+    <!-- মূল পিডিএফ রিডার ইঞ্জিন -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
 <body>
 
     <h1 class="seo-hidden">8ab69bd8ff762feb4d2aa5e60822fd7aa0cfc455a01e78668b645b97</h1>
-
     <div id="pdf-container"></div>
 
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-        const url = 'document.pdf';
+        const url = 'document.pdf'; // আপনার অরিজিনাল পিডিএফ ফাইল
         const container = document.getElementById('pdf-container');
 
         pdfjsLib.getDocument(url).promise.then(async (pdf) => {
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                 const page = await pdf.getPage(pageNum);
-                const scale = 2.5; 
+                const scale = 2.5; // হাই-রেজোলিউশন স্পষ্ট লেখা নিশ্চিত করতে
                 const viewport = page.getViewport({ scale: scale });
 
                 const pageContainer = document.createElement('div');
                 pageContainer.className = 'page-container';
                 container.appendChild(pageContainer);
 
+                // অরিজিনাল পিডিএফ পেজ রেন্ডার করা
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
                 canvas.height = viewport.height;
@@ -86,7 +105,7 @@
 
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
 
-                // টেক্সট লেয়ার (লেখা কপি করার জন্য)
+                // টেক্সট লেয়ার তৈরি
                 const textLayerDiv = document.createElement('div');
                 textLayerDiv.className = 'textLayer';
                 textLayerDiv.style.width = viewport.width + 'px';
@@ -101,7 +120,7 @@
                     textDivs: []
                 });
 
-                // লিংক লেয়ার (পিডিএফ এর ভেতরের লিংকে ক্লিক করার জন্য)
+                // সরাসরি ক্লিকেবল লিংক লেয়ার তৈরি
                 const annotationLayerDiv = document.createElement('div');
                 annotationLayerDiv.className = 'annotationLayer';
                 annotationLayerDiv.style.width = viewport.width + 'px';
@@ -124,6 +143,7 @@
                     }
                 });
 
+                // মোবাইল স্ক্রিনের সাইজের সাথে লিংক ও টেক্সট মেলানোর ফাংশন
                 function adjustScale() {
                     const currentWidth = pageContainer.clientWidth;
                     const originalWidth = viewport.width;
